@@ -2,6 +2,7 @@ package com.movie.moviemicroservice.controller;
 
 import com.movie.moviemicroservice.dao.BookingRequest;
 import com.movie.moviemicroservice.dao.BookingResponse;
+import com.movie.moviemicroservice.model.BookingDetails;
 import com.movie.moviemicroservice.model.Movie;
 import com.movie.moviemicroservice.service.MovieService;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,8 @@ public class MovieController {
         return new ResponseEntity<>(bookingResponse,HttpStatus.CREATED);
 
     }
+
+
 
 //    @GetMapping("/getCount")
 //    public Integer getCountByName(@RequestParam("movieName") String movieName,@RequestParam("theaterName") String theaterName)

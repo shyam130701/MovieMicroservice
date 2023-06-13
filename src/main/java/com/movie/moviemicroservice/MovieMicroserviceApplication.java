@@ -2,11 +2,9 @@ package com.movie.moviemicroservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication
-@EnableKafka
+//@EnableKafka
 
 public class MovieMicroserviceApplication {
 

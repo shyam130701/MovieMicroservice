@@ -25,4 +25,6 @@ public interface MovieImpl {
     String deleteMovie(String movieName,String theaterName) throws MovieTheaterNotFoundException, MovieInProgressException;
 
     String addTicketToMovie(String movieName,String theaterName) throws MovieTheaterNotFoundException;
+
+    List<BookingDetails> getListOfBooking();
 }

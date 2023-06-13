@@ -12,7 +12,6 @@ import com.movie.moviemicroservice.repository.MovieRepository;
 import com.movie.moviemicroservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ import java.util.Optional;
 public class MovieService implements MovieImpl {
 
 
-    private KafkaTemplate<Long,String> kafkaTemplate;
+//    private KafkaTemplate<Long,String> kafkaTemplate;
 
 
     private MovieRepository movieRepository;
@@ -53,8 +52,8 @@ public class MovieService implements MovieImpl {
                 .build();
         movieRepository.save(movie);
 
-        kafkaTemplate.send("movie-topics",movieRequest.getId(),movieRequest.getMovieName());
-        log.info("The movie {} is added to theater {}",movieRequest.getMovieName(),movieRequest.getTheaterName());
+//        kafkaTemplate.send("movie-topics",movieRequest.getId(),movieRequest.getMovieName());
+//        log.info("The movie {} is added to theater {}",movieRequest.getMovieName(),movieRequest.getTheaterName());
 
         return MovieResponse.builder()
                 .id(movie.getId())
@@ -105,6 +104,7 @@ public class MovieService implements MovieImpl {
                 .movieName(bookingRequest.getMovieName())
                 .theaterName(bookingRequest.getTheaterName())
                 .userName(bookingRequest.getUserName())
+                .ticketCount(bookingRequest.getTicketCount())
                 .build();
         int reduceTickets = movie.get().getAvailableTickets() - bookingRequest.getTicketCount();
         movie.get().setAvailableTickets(reduceTickets);
@@ -146,8 +146,13 @@ public class MovieService implements MovieImpl {
             throw new MovieTheaterNotFoundException("Movie and theater Not found");
         }
         movie.get().setAvailableTickets(100);
-
+        movieRepository.save(movie.get());
         return "Admin Successfully added the ticket count";
+    }
+
+    @Override
+    public List<BookingDetails> getListOfBooking() {
+        return bookingRepository.findAll();
     }
 
 

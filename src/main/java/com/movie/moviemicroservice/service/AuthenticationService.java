@@ -58,7 +58,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthResponse authenticateUser(Credentials credentials)
+    public String authenticateUser(Credentials credentials)
     {
         authenticationManager.authenticate(new
                 UsernamePasswordAuthenticationToken(
@@ -68,15 +68,18 @@ public class AuthenticationService {
 
         var userData=userRepository.findByEmail(credentials.getUserName())
                 .orElseThrow();
-        var jwtToken=jwtService.generateToken(userData);
 
-        return AuthResponse.builder()
-                .name(userData.getName())
-                .email(userData.getEmail())
-                .age(userData.getAge())
-                .password(userData.getPassword())
-                .token(jwtToken)
-                .build();
+        return jwtService.generateToken(userData);
+    }
+
+
+    public Optional<UserData> getUserByName(String name) throws UserNameNotFoundException {
+        Optional<UserData> userData=userRepository.findByEmail(name);
+        if(userData.isEmpty())
+        {
+            throw new UserNameNotFoundException("User Not found");
+        }
+        return userData;
     }
 
 

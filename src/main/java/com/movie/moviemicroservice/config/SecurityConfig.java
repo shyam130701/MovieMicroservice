@@ -26,8 +26,11 @@ public class SecurityConfig  {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-                .requestMatchers("/api/user/**").hasAnyAuthority("ADMIN","USER")
+//                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+//                .requestMatchers("/api/user/**").hasAnyAuthority("ADMIN","USER")
+
+                .requestMatchers("/api/admin/**").permitAll()
+                .requestMatchers("/api/user/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
