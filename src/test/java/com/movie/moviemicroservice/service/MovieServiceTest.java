@@ -3,9 +3,10 @@ package com.movie.moviemicroservice.service;
 import com.movie.moviemicroservice.dao.MovieRequest;
 import com.movie.moviemicroservice.dao.MovieResponse;
 import com.movie.moviemicroservice.exception.MovieAndTheaterAlreadyTakenException;
+import com.movie.moviemicroservice.feign.AuthFeign;
 import com.movie.moviemicroservice.model.Movie;
+import com.movie.moviemicroservice.repository.BookingRepository;
 import com.movie.moviemicroservice.repository.MovieRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.kafka.core.KafkaTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class MovieServiceTest {
@@ -27,9 +27,18 @@ class MovieServiceTest {
     @Mock
     MovieRepository movieRepository;
 
+    @Mock
+    KafkaTemplate<Long,String> kafkaTemplate;
+
+    @Mock
+    BookingRepository bookingRepository;
+
+    @Mock
+    AuthFeign userRepository;
+
     @BeforeEach
     void setUp() {
-
+        movieService=new MovieService(kafkaTemplate,movieRepository,bookingRepository,userRepository);
     }
 
     @Test

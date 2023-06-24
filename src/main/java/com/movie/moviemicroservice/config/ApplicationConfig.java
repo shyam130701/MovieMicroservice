@@ -1,7 +1,8 @@
 package com.movie.moviemicroservice.config;
 
-import com.movie.moviemicroservice.repository.UserRepository;
+import com.movie.moviemicroservice.feign.AuthFeign;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,12 +18,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
+
+    @Autowired
+    private AuthFeign authFeign;  //getting data from auth service
 
     @Bean
     public UserDetailsService userDetailsService()
     {
-        return username -> userRepository.findByEmail(username)
+        return username -> authFeign.userData(username) // fetching data
                 .orElseThrow(()->new UsernameNotFoundException("User not Found"));
     }
 

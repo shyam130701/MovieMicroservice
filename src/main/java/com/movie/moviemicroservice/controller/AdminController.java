@@ -24,25 +24,25 @@ public class AdminController {
 
     @PostMapping("/addMovie")
 
-    public ResponseEntity<MovieResponse> createMovie(@RequestBody MovieRequest movieRequest) throws MovieAndTheaterAlreadyTakenException {
+    public ResponseEntity<MovieResponse> createMovie(@RequestBody MovieRequest movieRequest,@RequestHeader(value = "Authorization")String token) throws MovieAndTheaterAlreadyTakenException {
         MovieResponse movieResponse=movieService.addMovie(movieRequest);
         return new ResponseEntity<>(movieResponse, HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/delete")
-    public String deletingMovie(@RequestParam("movieName") String movieName,@RequestParam("theaterName") String theaterName ) throws MovieInProgressException, MovieTheaterNotFoundException {
+    public String deletingMovie(@RequestParam("movieName") String movieName,@RequestParam("theaterName") String theaterName ,@RequestHeader(value = "Authorization")String token) throws MovieInProgressException, MovieTheaterNotFoundException {
         return movieService.deleteMovie(movieName,theaterName);
     }
 
 
     @PutMapping("/addTicket")
-    public String addingTicket(@RequestParam("movieName") String movieName,@RequestParam("theaterName") String theaterName) throws MovieTheaterNotFoundException {
+    public String addingTicket(@RequestParam("movieName") String movieName,@RequestParam("theaterName") String theaterName,@RequestHeader(value = "Authorization")String token) throws MovieTheaterNotFoundException {
         return movieService.addTicketToMovie(movieName,theaterName);
     }
 
     @GetMapping("/bookingList")
-    public List<BookingDetails> list()
+    public List<BookingDetails> list(@RequestHeader(value = "Authorization")String token)
     {
         return movieService.getListOfBooking();
     }

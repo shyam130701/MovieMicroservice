@@ -1,5 +1,6 @@
 package com.movie.moviemicroservice.config;
 
+import com.movie.moviemicroservice.feign.AuthFeign;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     private final UserDetailsService userDetailsService;
+
+    private AuthFeign authFeign;
     @Override
     protected void doFilterInternal(@NonNull  HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -38,10 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         jwt=authheader.substring(7);
         userEmail= jwtService.extractUserName(jwt);
+
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication()==null)
         {
             UserDetails userDetails=this.userDetailsService
                     .loadUserByUsername(userEmail);
+//            UserDetails userDetails=authFeign.userData(userEmail);
             if(jwtService.isTokenValid(jwt,userDetails))
             {
                 UsernamePasswordAuthenticationToken authToken=new UsernamePasswordAuthenticationToken(

@@ -23,14 +23,18 @@ public class SecurityConfig  {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
-//                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-//                .requestMatchers("/api/user/**").hasAnyAuthority("ADMIN","USER")
+                .requestMatchers("call/consumer/login")
+                .permitAll()
+                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+//                .requestMatchers("/api/user/**").hasAuthority("ADMIN")
+//                .requestMatchers("/api/user/**").hasAuthority("USER")
 
-                .requestMatchers("/api/admin/**").permitAll()
-                .requestMatchers("/api/user/**").permitAll()
+//                .requestMatchers("/api/admin/**").permitAll()
+//                .requestMatchers("/api/user/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -38,7 +42,8 @@ public class SecurityConfig  {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .cors();
         return http.build();
     }
 }

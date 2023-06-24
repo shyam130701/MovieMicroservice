@@ -1,5 +1,7 @@
 package com.movie.moviemicroservice.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.movie.moviemicroservice.config.CustomAuthorityDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "UserData")
-public class UserData implements UserDetails {
+
+public class UserData implements  UserDetails{
 
 
     private Long id;
@@ -33,6 +35,7 @@ public class UserData implements UserDetails {
     private Roles role;
 
 
+    @JsonDeserialize(using = CustomAuthorityDeserializer.class) //to parse the authority from auth service(deserialize) byte->string
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

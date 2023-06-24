@@ -5,13 +5,14 @@ import com.movie.moviemicroservice.dao.BookingResponse;
 import com.movie.moviemicroservice.dao.MovieRequest;
 import com.movie.moviemicroservice.dao.MovieResponse;
 import com.movie.moviemicroservice.exception.*;
+import com.movie.moviemicroservice.feign.AuthFeign;
 import com.movie.moviemicroservice.model.BookingDetails;
 import com.movie.moviemicroservice.model.Movie;
 import com.movie.moviemicroservice.repository.BookingRepository;
 import com.movie.moviemicroservice.repository.MovieRepository;
-import com.movie.moviemicroservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,14 +25,16 @@ import java.util.Optional;
 public class MovieService implements MovieImpl {
 
 
-//    private KafkaTemplate<Long,String> kafkaTemplate;
+    private KafkaTemplate<Long,String> kafkaTemplate;
 
 
     private MovieRepository movieRepository;
 
     private BookingRepository bookingRepository;
 
-    private UserRepository userRepository;
+//    private UserRepository userRepository;
+
+    private AuthFeign authFeign;
 
     @Override
     public MovieResponse addMovie(MovieRequest movieRequest) throws MovieAndTheaterAlreadyTakenException {
@@ -39,6 +42,7 @@ public class MovieService implements MovieImpl {
                 movieRequest.getMovieName(),
                 movieRequest.getTheaterName()
         );
+//        long count= movieRepository.count()+1;
         if (optionalMovie.isPresent()) {
             throw new MovieAndTheaterAlreadyTakenException("Movie {} already Added to the Theater {}" + movieRequest.getMovieName() + movieRequest.getTheaterName());
         }
@@ -52,8 +56,8 @@ public class MovieService implements MovieImpl {
                 .build();
         movieRepository.save(movie);
 
-//        kafkaTemplate.send("movie-topics",movieRequest.getId(),movieRequest.getMovieName());
-//        log.info("The movie {} is added to theater {}",movieRequest.getMovieName(),movieRequest.getTheaterName());
+        kafkaTemplate.send("movie-topics",movieRequest.getId(),movieRequest.getMovieName());
+        log.info("The movie {} is added to theater {}",movieRequest.getMovieName(),movieRequest.getTheaterName());
 
         return MovieResponse.builder()
                 .id(movie.getId())
@@ -81,14 +85,14 @@ public class MovieService implements MovieImpl {
     }
 
     @Override
-    public BookingResponse bookingTickets(BookingRequest bookingRequest) throws BookingTicketException, UserNameNotFoundException {
+    public BookingResponse bookingTickets(BookingRequest bookingRequest) throws BookingTicketException {
         Optional<Movie> movie = movieRepository.findMovieByMovieNameAndTheaterName(bookingRequest.getMovieName(), bookingRequest.getTheaterName());
         if (movie.isEmpty()) {
             throw new BookingTicketException("Booking Failed");
         }
-        if (userRepository.findByEmail(bookingRequest.getUserName()).isEmpty()) {
-            throw new UserNameNotFoundException("UserName Not Found");
-        }
+//        if (authFeign.userData(bookingRequest.getUserName()).isEmpty()) {
+//            throw new UserNameNotFoundException("UserName Not Found");
+//        }
         long count = bookingRepository.count() + 1;
         //custom Id
         LocalDateTime now = LocalDateTime.now();

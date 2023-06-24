@@ -1,7 +1,6 @@
 package com.movie.moviemicroservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.movie.moviemicroservice.config.JwtService;
 import com.movie.moviemicroservice.model.Movie;
 import com.movie.moviemicroservice.service.MovieService;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,9 +29,9 @@ class MovieControllerTest {
     @InjectMocks
     MovieController movieController;
 
-    @MockBean
-    JwtService jwtService;
-
+//    @MockBean
+//    JwtService jwtService;
+//
 
     @Autowired
     ObjectMapper objectMapper;
